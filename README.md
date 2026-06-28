@@ -1,4 +1,4 @@
-# RetailFlow POS
+# NTI POS
 
 A modern Point of Sale (POS) system built with the MERN stack.
 
