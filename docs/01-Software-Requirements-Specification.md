@@ -871,3 +871,167 @@ All forms shall provide meaningful validation messages and user feedback.
 
 **BR-010:** Every product shall have a unique SKU.
 
+# 13. Use Cases
+
+## UC-001 User Login
+
+**Primary Actor:** Admin, Cashier
+
+**Description:**
+Allows registered users to securely log in to the NTI POS system.
+
+**Preconditions:**
+
+* User account exists.
+* User account is active.
+
+**Main Flow:**
+
+1. User enters email and password.
+2. System validates the credentials.
+3. System authenticates the user.
+4. User is redirected to the dashboard.
+
+**Postconditions:**
+
+* User session is established.
+
+---
+
+## UC-002 Add Product
+
+**Primary Actor:** Admin
+
+**Description:**
+Allows the administrator to add a new product to the inventory.
+
+**Preconditions:**
+
+* Admin is logged in.
+
+**Main Flow:**
+
+1. Admin opens the Products module.
+2. Admin clicks **Add Product**.
+3. Admin enters product information.
+4. System validates the input.
+5. Product is saved successfully.
+
+**Postconditions:**
+
+* Product becomes available for sales.
+
+---
+
+## UC-003 Create Sale
+
+**Primary Actor:** Admin, Cashier
+
+**Description:**
+Allows users to create a new sales transaction.
+
+**Preconditions:**
+
+* User is logged in.
+* Products exist in inventory.
+
+**Main Flow:**
+
+1. User searches or scans a product.
+2. User adds products to the cart.
+3. User reviews the cart.
+4. User receives a cash payment.
+5. User confirms the sale.
+6. System generates an invoice.
+7. System deducts stock automatically.
+
+**Postconditions:**
+
+* Sale is recorded.
+* Inventory is updated.
+
+---
+
+## UC-004 Record Purchase
+
+**Primary Actor:** Admin
+
+**Description:**
+Allows the administrator to record purchases from suppliers.
+
+**Preconditions:**
+
+* Admin is logged in.
+
+**Main Flow:**
+
+1. Admin opens the Purchases module.
+2. Admin selects a supplier.
+3. Admin adds purchased products.
+4. Admin saves the purchase.
+5. System updates inventory.
+
+**Postconditions:**
+
+* Purchase history is stored.
+* Stock levels are increased.
+
+---
+
+# 14. System Constraints
+
+The following constraints apply to Version 1 of NTI POS:
+
+* The application supports a single retail branch.
+* Cash is the only supported payment method.
+* Internet connectivity is required.
+* Receipt printing is not included.
+* Product expiry management is not included.
+* The application is intended for web browsers.
+* Only authenticated users can access protected modules.
+
+---
+
+# 15. Acceptance Criteria
+
+The project shall be considered complete when the following requirements are satisfied:
+
+* Users can securely log in.
+* Admin can manage users.
+* Admin can manage products, categories, brands, suppliers, and customers.
+* Purchases automatically increase stock.
+* Sales automatically decrease stock.
+* Dashboard displays business statistics.
+* Reports are generated successfully.
+* Role-based authorization is enforced.
+* All major modules are integrated and functional.
+
+---
+
+# 16. Future Enhancements
+
+Future releases of NTI POS may include:
+
+* Multi-branch support
+* Online payment integration
+* Thermal receipt printing
+* Barcode label generation
+* Customer loyalty program
+* Mobile application
+* Multi-language support
+* Multi-currency support
+* AI-powered sales forecasting
+* AI-based inventory recommendations
+* Cloud backup and synchronization
+* Advanced business analytics
+
+---
+
+# 17. Conclusion
+
+This Software Requirements Specification defines the functional and non-functional requirements for NTI POS. The document serves as the foundation for system analysis, design, implementation, testing, deployment, and future maintenance.
+
+The system is designed using the MERN stack and follows the MVC architectural pattern with a service layer to ensure scalability, maintainability, and clean separation of responsibilities. The requirements documented in this specification provide a clear roadmap for developing a secure, efficient, and user-friendly Point of Sale system for small and medium-sized retail businesses.
+
+---
+
