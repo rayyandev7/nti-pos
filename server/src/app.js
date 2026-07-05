@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import errorMiddleware from "./middlewares/errorMiddleware.js";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 
 const app = express();
 
@@ -22,10 +23,10 @@ app.get("/api/v1/health", (req, res) => {
   });
 });
 
-// auth routes
+// Routes
 app.use("/api/v1/auth", authRoutes);
-// product routes 
 app.use("/api/v1/products", productRoutes);
+app.use("/api/v1/categories", categoryRoutes);
 
 
 app.use((req, res) => {
