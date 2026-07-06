@@ -23,6 +23,18 @@ const productSchema = new mongoose.Schema(
       trim: true,
     },
 
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+
+    brand: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Brand",
+      required: true,
+    },
+
     purchasePrice: {
       type: Number,
       required: [true, "Purchase price is required"],
