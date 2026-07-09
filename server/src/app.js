@@ -9,6 +9,7 @@ import brandRoutes from "./routes/brandRoutes.js";
 import supplierRoutes from "./routes/supplierRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
 import purchaseRoutes from "./routes/purchaseRoutes.js";
+import saleRoutes from "./routes/saleRoutes.js";
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/api/v1/brands", brandRoutes);
 app.use("/api/v1/suppliers", supplierRoutes);
 app.use("/api/v1/customers", customerRoutes);
 app.use("/api/v1/purchases", purchaseRoutes);
+app.use("/api/v1/sales", saleRoutes);
 
 
 app.use((req, res) => {
