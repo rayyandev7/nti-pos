@@ -17,3 +17,9 @@ export const getAllSales = async () => {
   const { data } = await api.get("/sales");
   return data;
 };
+
+// Get Sale By ID
+export const getSaleById = async (id) => {
+  const { data } = await api.get(`/sales/${id}`);
+  return data;
+};

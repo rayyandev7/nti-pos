@@ -9,6 +9,7 @@ import {
   Users,
   ShoppingCart,
   ReceiptText,
+  History,
   BarChart3,
   Settings,
   LogOut,
@@ -48,6 +49,8 @@ function Sidebar() {
 
         <SidebarItem to="/sales" icon={<ReceiptText size={18} />} text="Sales" />
 
+        <SidebarItem to="/sale-history"icon={<History size={18} />}text="Sale History"/>
+
         <SidebarItem to="/reports" icon={<BarChart3 size={18} />} text="Reports" />
 
         <SidebarItem to="/settings" icon={<Settings size={18} />} text="Settings" />
@@ -71,10 +74,9 @@ function SidebarItem({ to, icon, text }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${
-          isActive
-            ? "bg-green-600 text-white"
-            : "text-gray-300 hover:bg-[#2B2D31]"
+        `flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${isActive
+          ? "bg-green-600 text-white"
+          : "text-gray-300 hover:bg-[#2B2D31]"
         }`
       }
     >
