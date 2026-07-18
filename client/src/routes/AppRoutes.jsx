@@ -1,37 +1,40 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/auth/Login";
+import Dashboard from "../pages/dashboard/Dashboard";
+import DashboardLayout from "../layouts/DashboardLayout";
+
+import Products from "../pages/products/Products";
+import Categories from "../pages/categories/Categories";
+import Brands from "../pages/brands/Brands";
+import Suppliers from "../pages/suppliers/Suppliers";
+import Customers from "../pages/customers/Customers";
+import Purchases from "../pages/purchases/Purchases";
+import Sales from "../pages/sales/Sales";
+import Reports from "../pages/reports/Reports";
+import Settings from "../pages/settings/Settings";
 
 function AppRoutes() {
   return (
     <BrowserRouter>
-
       <Routes>
-
-        <Route path="/" element={<h1>Home</h1>} />
-
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
 
-        <Route path="/dashboard" element={<h1>Dashboard</h1>} />
-
-        <Route path="/products" element={<h1>Products</h1>} />
-
-        <Route path="/categories" element={<h1>Categories</h1>} />
-
-        <Route path="/brands" element={<h1>Brands</h1>} />
-
-        <Route path="/suppliers" element={<h1>Suppliers</h1>} />
-
-        <Route path="/customers" element={<h1>Customers</h1>} />
-
-        <Route path="/purchases" element={<h1>Purchases</h1>} />
-
-        <Route path="/sales" element={<h1>Sales</h1>} />
-
-        <Route path="/reports" element={<h1>Reports</h1>} />
-
+        {/* Dashboard Layout */}
+        <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/brands" element={<Brands />} />
+          <Route path="/suppliers" element={<Suppliers />} />
+          <Route path="/customers" element={<Customers />} />
+          <Route path="/purchases" element={<Purchases />} />
+          <Route path="/sales" element={<Sales />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/settings" element={<Settings />} />
+        </Route>
       </Routes>
-
     </BrowserRouter>
   );
 }
