@@ -47,6 +47,8 @@ function Sidebar() {
 
         <SidebarItem to="/purchases" icon={<ShoppingCart size={18} />} text="Purchases" />
 
+        <SidebarItem to="/purchase-history"icon={<History size={18} />}text="Purchase History"/>
+
         <SidebarItem to="/sales" icon={<ReceiptText size={18} />} text="Sales" />
 
         <SidebarItem to="/sale-history"icon={<History size={18} />}text="Sale History"/>

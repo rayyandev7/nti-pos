@@ -10,6 +10,8 @@ import Brands from "../pages/brands/Brands";
 import Suppliers from "../pages/suppliers/Suppliers";
 import Customers from "../pages/customers/Customers";
 import Purchases from "../pages/purchases/Purchases";
+import PurchaseHistory from "../pages/purchases/PurchaseHistory";
+import PurchaseDetails from "../pages/purchases/PurchaseDetails";
 import Sales from "../pages/sales/Sales";
 import SaleHistory from "../pages/sales/SaleHistory";
 import SaleDetails from "../pages/sales/SaleDetails";
@@ -32,6 +34,8 @@ function AppRoutes() {
           <Route path="/suppliers" element={<Suppliers />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/purchases" element={<Purchases />} />
+          <Route path="/purchase-history" element={<PurchaseHistory />} />
+          <Route path="/purchase-details/:id" element={<PurchaseDetails />}/>
           <Route path="/sales" element={<Sales />} />
           <Route path="/sale-history" element={<SaleHistory />} />
           <Route path="/sale-details/:id" element={<SaleDetails />} />
