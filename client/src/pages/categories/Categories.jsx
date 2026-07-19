@@ -53,11 +53,11 @@ function Categories() {
     }
   };
 
-  const handleEdit = (Category) => {
-    setEditingId(category._id);
-    setName(category.name);
-    setDescription(category.description);
-  };
+  const handleEdit = (category) => {
+  setEditingId(category._id);
+  setName(category.name);
+  setDescription(category.description);
+};
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this Category?")) return;
