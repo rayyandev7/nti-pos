@@ -145,3 +145,62 @@ export const getRecentCustomers = async (req, res) => {
 
   }
 };
+
+
+export const getDashboardData = async (req, res) => {
+  try {
+    const stats = {
+      totalProducts: await Product.countDocuments(),
+      totalCustomers: await Customer.countDocuments(),
+      totalSuppliers: await Supplier.countDocuments(),
+      totalPurchases: await Purchase.countDocuments(),
+      totalSales: await Sale.countDocuments(),
+      lowStockProducts: await Product.countDocuments({
+        $expr: {
+          $lte: ["$stock", "$minStock"],
+        },
+      }),
+    };
+
+    const recentSales = await Sale.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("customer", "fullName")
+      .populate("createdBy", "fullName");
+
+    const recentPurchases = await Purchase.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("supplier", "name companyName")
+      .populate("createdBy", "fullName");
+
+    const recentCustomers = await Customer.find()
+      .sort({ createdAt: -1 })
+      .limit(5);
+
+    const lowStockProductsList = await Product.find({
+      $expr: {
+        $lte: ["$stock", "$minStock"],
+      },
+    })
+      .populate("category", "name")
+      .populate("brand", "name")
+      .sort({ stock: 1 })
+      .limit(5);
+
+    res.status(200).json({
+      success: true,
+      stats,
+      recentSales,
+      recentPurchases,
+      recentCustomers,
+      lowStockProducts: lowStockProductsList,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

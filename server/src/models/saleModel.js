@@ -34,11 +34,10 @@ const saleItemSchema = new mongoose.Schema(
 const saleSchema = new mongoose.Schema(
   {
     customer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer",
-      required: true,
-    },
-
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Customer",
+  default: null,
+},
     invoiceNumber: {
       type: String,
       required: true,

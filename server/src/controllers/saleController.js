@@ -37,24 +37,26 @@ export const createSale = async (req, res) => {
             await product.save();
         }
 
-        // Update customer statistics
-        const customerData = await Customer.findById(customer);
+        // Update customer statistics (if customer is selected)
+        if (customer) {
+            const customerData = await Customer.findById(customer);
 
-        if (!customerData) {
-            return res.status(404).json({
-                success: false,
-                message: "Customer not found.",
-            });
+            if (!customerData) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Customer not found.",
+                });
+            }
+
+            customerData.totalPurchases += 1;
+            customerData.totalSpent += grandTotal;
+
+            await customerData.save();
         }
-
-        customerData.totalPurchases += 1;
-        customerData.totalSpent += grandTotal;
-
-        await customerData.save();
 
         // Save sale
         const sale = await Sale.create({
-            customer,
+            customer: customer || null,
             invoiceNumber,
             saleDate,
             items,
@@ -151,15 +153,15 @@ export const deleteSale = async (req, res) => {
             }
         }
 
-// Update Customer Statistics
+        // Update Customer Statistics
 const customer = await Customer.findById(sale.customer);
 
-        if (customer) {
-            customer.totalPurchases -= 1;
-            customer.totalSpent -= sale.grandTotal;
+if (customer) {
+    customer.totalPurchases -= 1;
+    customer.totalSpent -= sale.grandTotal;
 
-            await customer.save();
-        }
+    await customer.save();
+}
 
         // Delete Sale
         await Sale.findByIdAndDelete(id);
