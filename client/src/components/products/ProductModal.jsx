@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createProduct, updateProduct } from "../../services/productService";
 import { getCategories } from "../../services/categoryService";
 import { getBrands } from "../../services/brandService";
+import { toast } from "react-toastify";
 
 function ProductModal({
     isOpen,
@@ -40,6 +41,7 @@ function ProductModal({
                 setBrands(brandResponse.brands);
             } catch (error) {
                 console.error(error);
+                toast.error("Failed to load categories and brands.");
             }
         };
 
@@ -65,13 +67,13 @@ function ProductModal({
                 await createProduct(formData);
             }
 
-            alert(
+            toast.success(
                 selectedProduct
                     ? "Product updated successfully."
                     : "Product created successfully."
             );
 
-            refreshProducts();
+            await refreshProducts();
 
             setFormData({
                 name: "",
@@ -88,10 +90,13 @@ function ProductModal({
             onClose();
 
         } catch (error) {
-            console.error(error);
 
-            alert(
-                error.response?.data?.message || "Failed to create product."
+
+            toast.error(
+                error.response?.data?.message ||
+                (selectedProduct
+                    ? "Failed to update product."
+                    : "Failed to create product.")
             );
         } finally {
             setLoading(false);
@@ -190,13 +195,15 @@ function ProductModal({
                             onChange={handleChange}
                         />
 
-                        <Input
-                            label="Stock"
-                            name="stock"
-                            type="number"
-                            value={formData.stock}
-                            onChange={handleChange}
-                        />
+                        {!selectedProduct && (
+                            <Input
+                                label="Opening Stock"
+                                name="stock"
+                                type="number"
+                                value={formData.stock}
+                                onChange={handleChange}
+                            />
+                        )}
 
                         <Input
                             label="Minimum Stock"

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import Loader from "../../components/common/Loader";
+import { toast } from "react-toastify";
 import {
   getSuppliers,
   createSupplier,
@@ -9,6 +11,7 @@ import {
 function Suppliers() {
   const [suppliers, setSuppliers] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const [name, setName] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -19,13 +22,18 @@ function Suppliers() {
   const [editingId, setEditingId] = useState(null);
 
   const fetchSuppliers = async () => {
-    try {
-      const response = await getSuppliers();
-      setSuppliers(response.suppliers || []);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    setLoading(true);
+
+    const response = await getSuppliers();
+    setSuppliers(response.suppliers || []);
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to load suppliers.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchSuppliers();
@@ -44,11 +52,12 @@ function Suppliers() {
 
     try {
       if (editingId) {
-        await updateSupplier(editingId, supplierData);
-      } else {
-        await createSupplier(supplierData);
-      }
-
+  await updateSupplier(editingId, supplierData);
+  toast.success("Supplier updated successfully.");
+} else {
+  await createSupplier(supplierData);
+  toast.success("Supplier created successfully.");
+}
       setName("");
       setCompanyName("");
       setEmail("");
@@ -58,7 +67,9 @@ function Suppliers() {
 
       fetchSuppliers();
     } catch (error) {
-      alert(error.response?.data?.message || "Something went wrong");
+      toast.error(
+  error.response?.data?.message || "Something went wrong"
+);
     }
   };
 
@@ -72,22 +83,28 @@ function Suppliers() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this supplier?")) return;
+  if (!window.confirm("Delete this supplier?")) return;
 
-    try {
-      await deleteSupplier(id);
-      fetchSuppliers();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    await deleteSupplier(id);
+
+    toast.success("Supplier deleted successfully.");
+
+    fetchSuppliers();
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to delete supplier.");
+  }
+};
 
   const filteredSuppliers = suppliers.filter(
     (supplier) =>
       supplier.name.toLowerCase().includes(search.toLowerCase()) ||
       supplier.companyName.toLowerCase().includes(search.toLowerCase())
   );
-
+if (loading) {
+  return <Loader text="Loading suppliers..." />;
+}
   return (
     <div className="p-6 text-white">
       <h1 className="text-3xl font-bold mb-6">Suppliers</h1>

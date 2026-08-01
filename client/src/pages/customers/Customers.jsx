@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import Loader from "../../components/common/Loader";
+import { toast } from "react-toastify";
 import {
   getCustomers,
   createCustomer,
@@ -9,6 +11,7 @@ import {
 function Customers() {
   const [customers, setCustomers] = useState([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -19,10 +22,16 @@ function Customers() {
 
   const fetchCustomers = async () => {
     try {
+      setLoading(true);
+
       const response = await getCustomers();
       setCustomers(response.customers || []);
     } catch (error) {
-      console.error(error);
+  console.error(error);
+
+  toast.error("Failed to load customers.");
+} finally {
+      setLoading(false);
     }
   };
 
@@ -31,33 +40,40 @@ function Customers() {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const customerData = {
-      fullName,
-      phone,
-      email,
-      address,
-    };
-
-    try {
-      if (editingId) {
-        await updateCustomer(editingId, customerData);
-      } else {
-        await createCustomer(customerData);
-      }
-
-      setFullName("");
-      setPhone("");
-      setEmail("");
-      setAddress("");
-      setEditingId(null);
-
-      fetchCustomers();
-    } catch (error) {
-      alert(error.response?.data?.message || "Something went wrong");
-    }
+  const customerData = {
+    fullName,
+    phone,
+    email,
+    address,
   };
+
+  try {
+    if (editingId) {
+      await updateCustomer(editingId, customerData);
+      toast.success("Customer updated successfully.");
+    } else {
+      await createCustomer(customerData);
+      toast.success("Customer created successfully.");
+    }
+
+    setFullName("");
+    setPhone("");
+    setEmail("");
+    setAddress("");
+    setEditingId(null);
+
+    fetchCustomers();
+
+  } catch (error) {
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message || "Something went wrong."
+    );
+  }
+};
 
   const handleEdit = (customer) => {
     setEditingId(customer._id);
@@ -72,9 +88,13 @@ function Customers() {
 
     try {
       await deleteCustomer(id);
+
+      toast.success("Customer deleted successfully.");
+
       fetchCustomers();
     } catch (error) {
       console.error(error);
+      toast.error("Failed to delete customer.");
     }
   };
 
@@ -83,7 +103,9 @@ function Customers() {
       customer.fullName.toLowerCase().includes(search.toLowerCase()) ||
       customer.phone.includes(search)
   );
-
+  if (loading) {
+    return <Loader text="Loading customers..." />;
+  }
   return (
     <div className="p-6 text-white">
       <h1 className="text-3xl font-bold mb-6">Customers</h1>

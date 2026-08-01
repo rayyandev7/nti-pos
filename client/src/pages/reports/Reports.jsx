@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getDashboardReport } from "../../services/reportService";
 import {
   Chart as ChartJS,
@@ -25,6 +26,7 @@ ChartJS.register(
 
 function Reports() {
   const [dashboard, setDashboard] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadDashboard();
@@ -78,7 +80,7 @@ function Reports() {
 
   return (
     <div className="p-6 text-gray-900">
-      <h1 className="text-3xl font-bold mb-6">Reports Dashboard</h1>
+      <h1 className="text-4xl font-bold text-white mb-8">Reports Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
@@ -129,6 +131,27 @@ function Reports() {
         </div>
 
       </div>
+
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold text-white mb-6">
+          Report Shortcuts
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+          <button
+            onClick={() => navigate("/reports/stock")}
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-5 shadow transition"
+          >
+            <h3 className="text-lg font-bold">📦 Stock Report</h3>
+            <p className="text-sm mt-2">
+              View inventory, stock levels and stock value.
+            </p>
+          </button>
+
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
 
         {/* Monthly Sales Chart */}

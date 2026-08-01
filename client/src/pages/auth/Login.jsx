@@ -1,12 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loginUser } from "../../services/authService";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../redux/slices/authSlice";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        navigate("/dashboard", { replace: true });
+    }
+}, [navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -28,11 +39,15 @@ function Login() {
                 "user",
                 JSON.stringify(data.user)
             );
+            toast.success(`Welcome back, ${data.user.fullName}!`);
 
-            console.log("Login Successful");
-            console.log(data);
+            navigate("/dashboard");
 
         } catch (error) {
+
+            toast.error(
+                error.response?.data?.message || "Login failed."
+            );
 
             console.error(error.response?.data || error.message);
 

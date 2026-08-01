@@ -5,6 +5,8 @@ import {
 } from "../../services/purchaseService.js";
 import { getProductsForSale } from "../../services/saleService.js";
 import { getSuppliers } from "../../services/supplierService.js";
+import Loader from "../../components/common/Loader";
+import { toast } from "react-toastify";
 
 function Purchases() {
   const [products, setProducts] = useState([]);
@@ -14,22 +16,26 @@ function Purchases() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getProductsForSale();
-        setProducts(response.products || []);
-        const supplierResponse = await getSuppliers();
-        setSuppliers(supplierResponse.suppliers || []);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchProducts = async () => {
+  try {
+    setLoading(true);
 
-    fetchProducts();
-  }, []);
+    const response = await getProductsForSale();
+    setProducts(response.products || []);
+
+    const supplierResponse = await getSuppliers();
+    setSuppliers(supplierResponse.suppliers || []);
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to load products.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchProducts();
+}, []);
 
   const addToCart = (product) => {
     const existing = cart.find((item) => item._id === product._id);
@@ -105,11 +111,13 @@ function Purchases() {
 
   const handleCompletePurchase = async () => {
     if (!selectedSupplier) {
-      return alert("Please select a supplier.");
+      toast.warning("Please select a supplier.");
+return;
     }
 
     if (cart.length === 0) {
-      return alert("Purchase cart is empty.");
+      toast.warning("Purchase cart is empty.");
+return;
     }
 
     try {
@@ -128,21 +136,20 @@ function Purchases() {
 
       const response = await createPurchase(purchaseData);
 
-      alert(response.message);
+      toast.success(response.message);
 
       setCart([]);
       setSelectedSupplier("");
 
-      const productsResponse = await getProductsForSale();
-      setProducts(productsResponse.products || []);
+      await fetchProducts();
 
     } catch (error) {
       console.error(error);
 
-      alert(
-        error.response?.data?.message ||
-        "Failed to complete purchase."
-      );
+      toast.error(
+    error.response?.data?.message ||
+    "Failed to complete purchase."
+);
     }
   }
 
@@ -223,12 +230,8 @@ return (
           <div className="flex-1 overflow-y-auto p-4">
 
             {loading ? (
-
-              <p className="text-gray-400">
-                Loading products...
-              </p>
-
-            ) : (
+    <Loader text="Loading products..." />
+) : (
 
               <div className="grid grid-cols-3 gap-3">
 
@@ -407,7 +410,7 @@ return (
 
           <button
             onClick={handleCompletePurchase}
-            className="w-full bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold transition"
+            className="w-full bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold transition cursor-pointer"
           >
             Complete Purchase
           </button>

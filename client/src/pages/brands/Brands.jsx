@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import Loader from "../../components/common/Loader";
+import { toast } from "react-toastify";
 import {
   getBrands,
   createBrand,
@@ -14,13 +16,19 @@ function Brands() {
   const [description, setDescription] = useState("");
 
   const [editingId, setEditingId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchBrands = async () => {
     try {
+      setLoading(true);
+
       const response = await getBrands();
       setBrands(response.brands || []);
     } catch (error) {
       console.error(error);
+      toast.error("Failed to load brands.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,8 +47,10 @@ function Brands() {
     try {
       if (editingId) {
         await updateBrand(editingId, brandData);
+        toast.success("Brand updated successfully.");
       } else {
         await createBrand(brandData);
+        toast.success("Brand created successfully.");
       }
 
       setName("");
@@ -49,7 +59,9 @@ function Brands() {
 
       fetchBrands();
     } catch (error) {
-      alert(error.response?.data?.message || "Something went wrong");
+      toast.error(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   };
 
@@ -64,9 +76,13 @@ function Brands() {
 
     try {
       await deleteBrand(id);
+
+      toast.success("Brand deleted successfully.");
+
       fetchBrands();
     } catch (error) {
       console.error(error);
+      toast.error("Failed to delete brand.");
     }
   };
 
@@ -74,6 +90,9 @@ function Brands() {
     brand.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  if (loading) {
+    return <Loader text="Loading brands..." />;
+  }
   return (
     <div className="p-6 text-white">
       <h1 className="text-3xl font-bold mb-6">Brands</h1>

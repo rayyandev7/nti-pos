@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import {
   LayoutDashboard,
@@ -16,6 +16,14 @@ import {
 } from "lucide-react";
 
 function Sidebar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/login");
+  };
   return (
     <aside className="w-60 bg-[#181A1B] text-white h-screen flex flex-col border-r border-[#2B2D31]">
 
@@ -47,11 +55,11 @@ function Sidebar() {
 
         <SidebarItem to="/purchases" icon={<ShoppingCart size={18} />} text="Purchases" />
 
-        <SidebarItem to="/purchase-history"icon={<History size={18} />}text="Purchase History"/>
+        <SidebarItem to="/purchase-history" icon={<History size={18} />} text="Purchase History" />
 
         <SidebarItem to="/sales" icon={<ReceiptText size={18} />} text="Sales" />
 
-        <SidebarItem to="/sale-history"icon={<History size={18} />}text="Sale History"/>
+        <SidebarItem to="/sale-history" icon={<History size={18} />} text="Sale History" />
 
         <SidebarItem to="/reports" icon={<BarChart3 size={18} />} text="Reports" />
 
@@ -61,8 +69,10 @@ function Sidebar() {
 
       {/* Logout */}
       <div className="p-4 border-t border-[#2B2D31]">
-        <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-red-600 transition text-gray-300">
-          <LogOut size={18} />
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-red-600 transition text-gray-300"
+        ><LogOut size={18} />
           <span className="text-[15px]">Logout</span>
         </button>
       </div>

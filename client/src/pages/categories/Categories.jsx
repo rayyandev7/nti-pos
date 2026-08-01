@@ -5,6 +5,8 @@ import {
   updateCategory,
   deleteCategory,
 } from "../../services/categoryService";
+import Loader from "../../components/common/Loader";
+import { toast } from "react-toastify";
 
 function Categories() {
   const [categories, setCategories] = useState([]);
@@ -15,12 +17,20 @@ function Categories() {
 
   const [editingId, setEditingId] = useState(null);
 
+  const [loading, setLoading] = useState(true);
+
   const fetchCategories = async () => {
     try {
-      const response = await getCategories();
-      setCategories(response.categories || []);
+      setLoading(true);
+
+      const data = await getCategories();
+      setCategories(data.categories);
+
     } catch (error) {
       console.error(error);
+      toast.error("Failed to load categories.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,41 +49,53 @@ function Categories() {
     try {
       if (editingId) {
         await updateCategory(editingId, CategoryData);
+        toast.success("Category updated successfully.");
       } else {
         await createCategory(CategoryData);
+        toast.success("Category created successfully.");
       }
 
       setName("");
       setDescription("");
       setEditingId(null);
 
-      fetchCategories();
+
     } catch (error) {
-      alert(error.response?.data?.message || "Something went wrong");
+      toast.error(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   };
 
   const handleEdit = (category) => {
-  setEditingId(category._id);
-  setName(category.name);
-  setDescription(category.description);
-};
+    setEditingId(category._id);
+    setName(category.name);
+    setDescription(category.description);
+  };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this Category?")) return;
 
     try {
       await deleteCategory(id);
+
+      toast.success("Category deleted successfully.");
+
       fetchCategories();
+
+
     } catch (error) {
       console.error(error);
+      toast.error("Failed to delete category.");
     }
   };
 
   const filteredCategories = categories.filter((category) =>
     category.name.toLowerCase().includes(search.toLowerCase())
   );
-
+  if (loading) {
+    return <Loader text="Loading categories..." />;
+  }
   return (
     <div className="p-6 text-white">
       <h1 className="text-3xl font-bold mb-6">Categories</h1>

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Plus, Search, Pencil, Trash2 } from "lucide-react";
 import { getProducts, deleteProduct, } from "../../services/productService";
 import ProductModal from "../../components/products/ProductModal";
+import { toast } from "react-toastify";
+import Loader from "../../components/common/Loader";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -20,6 +22,8 @@ function Products() {
       setProducts(data.products);
     } catch (error) {
       console.error(error);
+
+      toast.error("Failed to load products.");
     } finally {
       setLoading(false);
     }
@@ -40,13 +44,13 @@ function Products() {
     try {
       await deleteProduct(id);
 
-      alert("Product deleted successfully.");
+      toast.success("Product deleted successfully.");
 
       fetchProducts();
     } catch (error) {
       console.error(error);
 
-      alert("Failed to delete product.");
+      toast.error("Failed to delete product.");
     }
   };
 
@@ -120,11 +124,8 @@ function Products() {
           <tbody>
             {loading ? (
               <tr>
-                <td
-                  colSpan="8"
-                  className="text-center py-10 text-gray-400"
-                >
-                  Loading products...
+                <td colSpan="8">
+                  <Loader text="Loading products..." />
                 </td>
               </tr>
             ) : filteredProducts.length === 0 ? (

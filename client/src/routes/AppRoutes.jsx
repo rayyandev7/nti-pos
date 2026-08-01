@@ -17,6 +17,8 @@ import SaleHistory from "../pages/sales/SaleHistory";
 import SaleDetails from "../pages/sales/SaleDetails";
 import Reports from "../pages/reports/Reports";
 import Settings from "../pages/settings/Settings";
+import StockReport from "../pages/reports/StockReport";
+import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
   return (
@@ -26,21 +28,24 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
 
         {/* Dashboard Layout */}
-        <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/categories" element={<Categories />} />
-          <Route path="/brands" element={<Brands />} />
-          <Route path="/suppliers" element={<Suppliers />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/purchases" element={<Purchases />} />
-          <Route path="/purchase-history" element={<PurchaseHistory />} />
-          <Route path="/purchase-details/:id" element={<PurchaseDetails />}/>
-          <Route path="/sales" element={<Sales />} />
-          <Route path="/sale-history" element={<SaleHistory />} />
-          <Route path="/sale-details/:id" element={<SaleDetails />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/settings" element={<Settings />} />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<DashboardLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/brands" element={<Brands />} />
+            <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/purchases" element={<Purchases />} />
+            <Route path="/purchase-history" element={<PurchaseHistory />} />
+            <Route path="/purchase-details/:id" element={<PurchaseDetails />} />
+            <Route path="/sales" element={<Sales />} />
+            <Route path="/sale-history" element={<SaleHistory />} />
+            <Route path="/sale-details/:id" element={<SaleDetails />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/reports/stock" element={<StockReport />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
