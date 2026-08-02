@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Search, ShoppingCart } from "lucide-react";
 import { getProductsForSale, createSale } from "../../services/saleService.js";
 import { getCustomers } from "../../services/customerService.js";
+import Loader from "../../components/common/Loader";
+import { toast } from "react-toastify";
 
 function Sales() {
   const [products, setProducts] = useState([]);
@@ -11,60 +13,79 @@ function Sales() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getProductsForSale();
-        setProducts(response.products || []);
-        const customerResponse = await getCustomers();
-        setCustomers(customerResponse.customers || []);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchProducts = async () => {
+  try {
+    setLoading(true);
 
-    fetchProducts();
-  }, []);
+    const response = await getProductsForSale();
+    setProducts(response.products || []);
+
+    const customerResponse = await getCustomers();
+    setCustomers(customerResponse.customers || []);
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to load products.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchProducts();
+}, []);
 
   const addToCart = (product) => {
-    const existing = cart.find((item) => item._id === product._id);
+  const existing = cart.find((item) => item._id === product._id);
 
-    if (existing) {
-      setCart(
-        cart.map((item) =>
-          item._id === product._id
-            ? {
+  if (existing) {
+    if (existing.quantity >= product.stock) {
+      toast.warning(`Only ${product.stock} items available in stock.`);
+      return;
+    }
+
+    setCart(
+      cart.map((item) =>
+        item._id === product._id
+          ? {
               ...item,
               quantity: item.quantity + 1,
             }
-            : item
-        )
-      );
-    } else {
-      setCart([
-        ...cart,
-        {
-          ...product,
-          quantity: 1,
-        },
-      ]);
-    }
-  };
-
-  const increaseQty = (id) => {
-    setCart(
-      cart.map((item) =>
-        item._id === id
-          ? {
-            ...item,
-            quantity: item.quantity + 1,
-          }
           : item
       )
     );
-  };
+  } else {
+    if (product.stock <= 0) {
+      toast.error(`${product.name} is out of stock.`);
+      return;
+    }
+
+    setCart([
+      ...cart,
+      {
+        ...product,
+        quantity: 1,
+      },
+    ]);
+  }
+};
+
+  const increaseQty = (id) => {
+  setCart(
+    cart.map((item) => {
+      if (item._id !== id) return item;
+
+      if (item.quantity >= item.stock) {
+        toast.warning(`Only ${item.stock} items available in stock.`);
+        return item;
+      }
+
+      return {
+        ...item,
+        quantity: item.quantity + 1,
+      };
+    })
+  );
+};
 
   const decreaseQty = (id) => {
     setCart(
@@ -101,7 +122,8 @@ function Sales() {
 
   const handleCompleteSale = async () => {
     if (cart.length === 0) {
-      return alert("Cart is empty.");
+      toast.warning("Cart is empty.");
+return;
     }
 
     try {
@@ -120,18 +142,19 @@ function Sales() {
 
       const response = await createSale(saleData);
 
-      alert(response.message);
+      toast.success("Sale completed successfully.");
 
       setCart([]);
+      setSelectedCustomer("");
 
-      const productsResponse = await getProductsForSale();
-      setProducts(productsResponse.products || []);
+      await fetchProducts();
     } catch (error) {
       console.error(error);
 
-      alert(
-        error.response?.data?.message || "Failed to complete sale."
-      );
+      toast.error(
+    error.response?.data?.message ||
+    "Failed to complete sale."
+);
     }
   };
 
@@ -210,12 +233,8 @@ function Sales() {
             <div className="flex-1 overflow-y-auto p-4">
 
               {loading ? (
-
-                <p className="text-gray-400">
-                  Loading products...
-                </p>
-
-              ) : (
+    <Loader text="Loading products..." />
+) : (
 
                 <div className="grid grid-cols-3 gap-3">
 
@@ -371,7 +390,7 @@ function Sales() {
 
             <button
               onClick={handleCompleteSale}
-              className="w-full bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold transition"
+              className="w-full bg-green-600 hover:bg-green-700 py-3 rounded-lg font-semibold transition cursor-pointer"
             >
               Complete Sale
             </button>

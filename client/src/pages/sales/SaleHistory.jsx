@@ -1,25 +1,34 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAllSales } from "../../services/saleService";
+import Loader from "../../components/common/Loader";
+import { toast } from "react-toastify";
 
 function SaleHistory() {
     const [sales, setSales] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchSales = async () => {
-            try {
-                const response = await getAllSales();
-                setSales(response.sales || []);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchSales = async () => {
+        try {
+            setLoading(true);
 
+            const response = await getAllSales();
+            setSales(response.sales || []);
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to load sales.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchSales();
     }, []);
+
+    if (loading) {
+        return <Loader text="Loading sales history..." />;
+    }
 
     return (
         <div className="p-6">
@@ -40,15 +49,9 @@ function SaleHistory() {
                     </thead>
 
                     <tbody>
-                        {loading ? (
+                        {sales.length === 0 ? (
                             <tr>
-                                <td colSpan="5" className="p-6 text-center">
-                                    Loading...
-                                </td>
-                            </tr>
-                        ) : sales.length === 0 ? (
-                            <tr>
-                                <td colSpan="5" className="p-6 text-center">
+                                <td colSpan="6" className="p-6 text-center">
                                     No sales found.
                                 </td>
                             </tr>

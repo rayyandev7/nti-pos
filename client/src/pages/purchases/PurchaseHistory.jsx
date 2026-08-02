@@ -4,18 +4,26 @@ import {
   getPurchases,
   deletePurchase,
 } from "../../services/purchaseService";
+import Loader from "../../components/common/Loader";
+import { toast } from "react-toastify";
 
 function PurchaseHistory() {
   const [purchases, setPurchases] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchPurchases = async () => {
-    try {
-      const response = await getPurchases();
-      setPurchases(response.purchases || []);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    setLoading(true);
+
+    const response = await getPurchases();
+    setPurchases(response.purchases || []);
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to load purchase history.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchPurchases();
@@ -25,13 +33,23 @@ function PurchaseHistory() {
     if (!window.confirm("Delete this purchase?")) return;
 
     try {
-      await deletePurchase(id);
-      fetchPurchases();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  await deletePurchase(id);
 
+  toast.success("Purchase deleted successfully.");
+
+  fetchPurchases();
+} catch (error) {
+  console.error(error);
+
+  toast.error(
+    error.response?.data?.message ||
+    "Failed to delete purchase."
+  );
+}
+  };
+if (loading) {
+  return <Loader text="Loading purchase history..." />;
+}
   return (
     <div className="p-6 text-white">
 
@@ -58,7 +76,17 @@ function PurchaseHistory() {
 
         <tbody>
 
-          {purchases.map((purchase) => (
+  {purchases.length === 0 ? (
+    <tr>
+      <td
+        colSpan="6"
+        className="text-center py-10 text-gray-400"
+      >
+        No purchase history found.
+      </td>
+    </tr>
+  ) : (
+    purchases.map((purchase) => (
 
             <tr
               key={purchase._id}
@@ -96,7 +124,7 @@ function PurchaseHistory() {
 
                 <button
                   onClick={() => handleDelete(purchase._id)}
-                  className="bg-red-600 px-3 py-1 rounded"
+                  className="bg-red-600 px-3 py-1 rounded cursor-pointer"
                 >
                   Delete
                 </button>
@@ -105,7 +133,8 @@ function PurchaseHistory() {
 
             </tr>
 
-          ))}
+          ))
+)}
 
         </tbody>
 
@@ -114,5 +143,4 @@ function PurchaseHistory() {
     </div>
   );
 }
-
 export default PurchaseHistory;
