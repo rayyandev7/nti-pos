@@ -4,6 +4,7 @@ import { getProducts, deleteProduct, } from "../../services/productService";
 import ProductModal from "../../components/products/ProductModal";
 import { toast } from "react-toastify";
 import Loader from "../../components/common/Loader";
+import Pagination from "../../components/common/Pagination";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -11,6 +12,11 @@ function Products() {
   const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortField, setSortField] = useState("name");
+  const [sortOrder, setSortOrder] = useState("asc");
+
+  const productsPerPage = 10;
 
   // Fetch Products
   const fetchProducts = async () => {
@@ -66,6 +72,51 @@ function Products() {
     );
   });
 
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    let valueA = a[sortField];
+    let valueB = b[sortField];
+
+    if (sortField === "category") {
+      valueA = a.category?.name || "";
+      valueB = b.category?.name || "";
+    }
+
+    if (sortField === "brand") {
+      valueA = a.brand?.name || "";
+      valueB = b.brand?.name || "";
+    }
+
+    if (typeof valueA === "string") valueA = valueA.toLowerCase();
+    if (typeof valueB === "string") valueB = valueB.toLowerCase();
+
+    if (valueA < valueB) return sortOrder === "asc" ? -1 : 1;
+    if (valueA > valueB) return sortOrder === "asc" ? 1 : -1;
+
+    return 0;
+  });
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredProducts.length / productsPerPage)
+  );
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+
+  const indexOfFirstProduct =
+    indexOfLastProduct - productsPerPage;
+
+  const currentProducts = sortedProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+  };
   return (
     <div>
       {/* Header */}
@@ -100,7 +151,10 @@ function Products() {
           type="text"
           placeholder="Search products..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1);
+          }}
           className="w-full md:w-96 bg-[#2B2D31] border border-gray-700 rounded-lg pl-10 pr-4 py-3 text-white outline-none focus:border-green-500"
         />
       </div>
@@ -110,13 +164,62 @@ function Products() {
         <table className="w-full">
           <thead className="bg-[#1E2022]">
             <tr>
-              <th className="text-left px-6 py-4">Product</th>
-              <th className="text-left px-6 py-4">SKU</th>
-              <th className="text-left px-6 py-4">Category</th>
-              <th className="text-left px-6 py-4">Brand</th>
-              <th className="text-left px-6 py-4">Purchase</th>
-              <th className="text-left px-6 py-4">Selling</th>
-              <th className="text-left px-6 py-4">Stock</th>
+              <th
+                onClick={() => handleSort("name")}
+                className="text-left px-6 py-4 cursor-pointer select-none"
+              >
+                Product{" "}
+                {sortField === "name" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
+                onClick={() => handleSort("sku")}
+                className="text-left px-6 py-4 cursor-pointer select-none"
+              >
+                SKU{" "}
+                {sortField === "sku" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
+                onClick={() => handleSort("category")}
+                className="text-left px-6 py-4 cursor-pointer select-none"
+              >
+                Category{" "}
+                {sortField === "category" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
+                onClick={() => handleSort("brand")}
+                className="text-left px-6 py-4 cursor-pointer select-none"
+              >
+                Brand{" "}
+                {sortField === "brand" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
+                onClick={() => handleSort("purchasePrice")}
+                className="text-left px-6 py-4 cursor-pointer select-none"
+              >
+                Purchase{" "}
+                {sortField === "purchasePrice" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
+                onClick={() => handleSort("sellingPrice")}
+                className="text-left px-6 py-4 cursor-pointer select-none"
+              >
+                Selling{" "}
+                {sortField === "sellingPrice" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
+              <th
+                onClick={() => handleSort("stock")}
+                className="text-left px-6 py-4 cursor-pointer select-none"
+              >
+                Stock{" "}
+                {sortField === "stock" &&
+                  (sortOrder === "asc" ? "▲" : "▼")}
+              </th>
               <th className="text-center px-6 py-4">Actions</th>
             </tr>
           </thead>
@@ -138,7 +241,7 @@ function Products() {
                 </td>
               </tr>
             ) : (
-              filteredProducts.map((product) => (
+              currentProducts.map((product) => (
                 <tr
                   key={product._id}
                   className="border-t border-gray-700 hover:bg-[#34373C]"
@@ -201,6 +304,11 @@ function Products() {
           </tbody>
         </table>
       </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
 
       {/* Product Modal */}
       <ProductModal

@@ -180,7 +180,7 @@ return (
 
       {/* PRODUCTS */}
 
-      <div className="col-span-8 bg-[#2A2D31] rounded-xl flex flex-col overflow-hidden">
+      <div className="col-span-8 bg-[#2A2D31] rounded-xl flex flex-col h-[calc(100vh-170px)]">
 
         <div className="p-5 border-b border-gray-700">
 
@@ -281,7 +281,7 @@ return (
 
       {/* CART */}
 
-      <div className="col-span-4 bg-[#2A2D31] rounded-xl flex flex-col overflow-hidden">
+      <div className="col-span-4 bg-[#2A2D31] rounded-xl flex flex-col h-[calc(100vh-170px)] sticky top-5">
 
         <div className="p-5 border-b border-gray-700 flex items-center gap-3">
 
@@ -293,7 +293,7 @@ return (
 
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
 
           {cart.length === 0 ? (
 
